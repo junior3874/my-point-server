@@ -1,8 +1,12 @@
 import express from "express";
-import dotenv from "dotenv";
+import routes from "./routes";
+
 const app = express();
 
-console.log(process.env.NODE_ENV);
+app.use(express.json());
+app.use(routes);
 app.listen(process.env.PORT || 3000, () => {
   console.log("server is running");
 });
+
+export default app;
