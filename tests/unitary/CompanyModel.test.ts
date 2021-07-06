@@ -1,6 +1,8 @@
 import CompanyStore from "../../src/models/company/companyStore";
 
 import CreateCompanyDbMock from "../mocks/CreateCompanyDbMock";
+import CompanyServiceSupportStoreDbMock from '../mocks/CompanyServiceSupportStoreDbMock'
+import CompanyServiceSupportStore from '../../src/models/company/companyServiceSupportStore'
 
 describe("create company", () => {
   const mockedDB = new CreateCompanyDbMock();
@@ -22,8 +24,30 @@ describe("create company", () => {
         name: "Denver",
       });
     } catch (err) {
-      console.log(err, "olha só");
+     
       expect(err).toThrow("company already exist");
     }
   });
 });
+
+describe("company create user support", () => {
+
+  const mockedDB = new CompanyServiceSupportStoreDbMock();
+  const companyServiceSupportStore = new CompanyServiceSupportStore(mockedDB);
+  it("it a company create ServiceSupport", async () => {
+      const response = await companyServiceSupportStore.execute({name: "testing", rg: 508371946, password: "password", function_id: 1, companyId: 1, cpf: 53060329826})
+      
+   
+      expect(response).toStrictEqual({name: "testing", rg: 508371946, password: "password", function_id: 1, companyId: 1, cpf: 53060329826})
+    })
+
+    it("it NOT a company create ServiceSupport, because rg has registred", async () => {
+      await companyServiceSupportStore.execute({name: "testing", rg: 508371947, password: "password", function_id: 1, companyId: 1, cpf: 53060329826})
+      try{
+      await companyServiceSupportStore.execute({name: "testing", rg: 508371947, password: "password", function_id: 1, companyId: 1, cpf: 53060329826})
+      }catch(err){
+        expect(err).toThrow("Suport has exist");
+      }
+
+    })
+})
